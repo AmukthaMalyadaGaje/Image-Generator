@@ -18,9 +18,9 @@ export function Nav() {
       <div className="flex flex-1 items-center">
         <Link href="/">
           <h1 className={cn("font-light text-xl", spaceMono.className)}>
-            <span className="text-pink-700">Chat</span>
-            <span>⚡️</span>
-            <span>Teach</span>
+            <span className="text-pink-700"></span>
+            <span>Text to Image</span>
+            <span>Generator</span>
           </h1>
         </Link>
       </div>
@@ -28,7 +28,7 @@ export function Nav() {
         <ThemeToggle />
         <Button size="sm" asChild>
           <Link
-            href="https://github.com/ChatTeach/Fastest-Text-to-Image-Generator"
+            href="https://github.com/AmukthaMalyadaGaje/Fastest-Text-to-Image-Generator"
             className="flex flex-row space-x-2 items-center"
             target="_blank"
           >

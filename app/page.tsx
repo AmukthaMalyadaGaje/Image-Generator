@@ -4,9 +4,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import * as fal from "@fal-ai/serverless-client";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { ModelIcon } from "@/components/icons/model-icon";
-import Link from "next/link";
+// import Link from "next/link";
 
 const DEFAULT_PROMPT =
   "A cinematic shot of a baby raccoon wearing an intricate italian priest robe";
@@ -46,11 +44,11 @@ export default function Lightning() {
 
   const timer = useRef<any | undefined>(undefined);
 
-  const handleOnChange = async (prompt: string) => {
+  // Moved image generation logic into a separate function
+  const handleGenerateImage = (prompt: string) => {
     if (timer.current) {
       clearTimeout(timer.current);
     }
-    setPrompt(prompt);
     const input = {
       ...INPUT_DEFAULTS,
       prompt: prompt,
@@ -62,17 +60,18 @@ export default function Lightning() {
     }, 500);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleGenerateImage(prompt);
+    }
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.document.cookie = "fal-app=true; path=/; samesite=strict; secure;";
     }
     // initial image
-    connection.send({
-      ...INPUT_DEFAULTS,
-      num_inference_steps: "4",
-      prompt: prompt,
-      seed: seed ? Number(seed) : Number(randomSeed()),
-    });
+    handleGenerateImage(prompt);
   }, []);
 
   return (
@@ -83,10 +82,11 @@ export default function Lightning() {
             <div className="flex flex-col max-md:space-y-4 md:flex-row md:space-x-4 max-w-full">
               <div className="flex-1 space-y-1">
                 <label>Prompt</label>
-                <Input
+                <input
                   onChange={(e) => {
-                    handleOnChange(e.target.value);
+                    setPrompt(e.target.value);
                   }}
+                  onKeyPress={handleKeyPress} // Added key press listener
                   className="font-light w-full"
                   placeholder="Type something..."
                   value={prompt}
@@ -94,11 +94,11 @@ export default function Lightning() {
               </div>
               <div className="space-y-1">
                 <label>Seed</label>
-                <Input
+                <input
                   onChange={(e) => {
                     setSeed(e.target.value);
-                    handleOnChange(prompt);
                   }}
+                  onKeyPress={handleKeyPress} // Added key press listener for seed
                   className="font-light w-28"
                   placeholder="random"
                   type="number"
@@ -114,7 +114,7 @@ export default function Lightning() {
                   <span className="text-neutral-500">Inference time:</span>
                   <span
                     className={
-                      !inferenceTime ? "text-neutral-500" : "text-green-400"
+                      inferenceTime ? "text-green-400" : "text-neutral-500"
                     }
                   >
                     {inferenceTime
@@ -131,23 +131,7 @@ export default function Lightning() {
             </div>
           </div>
         </div>
-        <div className="container flex flex-col items-center justify-center my-4">
-          <p className="text-sm text-base-content/70 py-4 text-center text-neutral-400">
-            This playground is hosted on{" "}
-            <strong>
-              <a href="https://fal.ai" className="underline" target="_blank">
-                fal.ai
-              </a>
-            </strong>{" "}
-            and is for demonstration purposes only.
-          </p>
-          <div className="flex flex-row items-center space-x-2">
-            <span className="text-xs font-mono">powered by</span>
-            <Link href="https://fal.ai" target="_blank">
-              <ModelIcon />
-            </Link>
-          </div>
-        </div>
+        <div className="container flex flex-col items-center justify-center my-4"></div>
       </div>
     </main>
   );
